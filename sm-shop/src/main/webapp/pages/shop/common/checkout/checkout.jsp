@@ -213,6 +213,9 @@ function setPaymentModule(module) {
 	else if(module.indexOf('braintree') >= 0) {
 			$('#paymentMethodType').val('CREDITCARD');
 			console.log('TYPE ' + $('#paymentMethodType').val());
+	}
+	else if(module.indexOf('razorpay') >= 0) {
+		$('#paymentMethodType').val('RAZORPAY');
 	} else {
 		pType = pType.toUpperCase();
 		console.log('Other type - ' + pType);
@@ -503,6 +506,11 @@ function bindActions() {
 		else if(paymentSelection.indexOf('beanstream') >= 0) {
 			//console.log('Beanstream ');
 			$('#paymentMethodType').val('CREDITCARD');
+			submitForm();
+		}
+		else if(paymentSelection.indexOf('razorpay') >= 0) {
+			//console.log('Beanstream ');
+			$('#paymentMethodType').val('RAZORPAY');
 			submitForm();
 		} else {
 			//submit form
@@ -976,7 +984,7 @@ $(document).ready(function() {
 														<label><s:message code="label.generic.firstname" text="First Name"/></label>
 									    					<div class="controls"> 
 										    					<s:message code="NotEmpty.customer.firstName" text="First name is required" var="msgFirstName"/>
-										      					<form:input id="customer.firstName" cssClass="input-large required form-control form-control-lg" path="customer.billing.firstName" autofocus="autofocus" title="${msgFirstName}"/>
+										      					<form:input id="customerfirstName" cssClass="input-large required form-control form-control-lg" path="customer.billing.firstName" autofocus="autofocus" title="${msgFirstName}"/>
 										    					<form:errors path="customer.billing.firstName" cssClass="error" />
 										    					<span id="error-customer.billing.firstName" class="error"></span>
 									    					</div> 
@@ -987,7 +995,7 @@ $(document).ready(function() {
 														<label><s:message code="label.generic.lastname" text="Last Name"/></label>
 									    					<div class="controls"> 
 										    					<s:message code="NotEmpty.customer.lastName" text="Last name is required" var="msgLastName"/>
-										    					<form:input id="customer.lastName" cssClass="input-large required form-control form-control-lg"  maxlength="32" path="customer.billing.lastName" title="${msgLastName}" />
+										    					<form:input id="customerlastName" cssClass="input-large required form-control form-control-lg"  maxlength="32" path="customer.billing.lastName" title="${msgLastName}" />
 										    					<form:errors path="customer.billing.lastName" cssClass="error" />
 										    					<span id="error-customer.billing.lastName" class="error"></span>
 									    					</div> 
@@ -1003,7 +1011,7 @@ $(document).ready(function() {
 														<label><s:message code="label.generic.email" text="Email address"/></label>
 									    					<div class="controls">
 										    					<s:message code="NotEmpty.customer.emailAddress" text="Email address is required" var="msgEmail"/> 
-										    					<form:input id="customer.emailAddress" cssClass="input-large required email form-control form-control-lg" path="customer.emailAddress" title="${msgEmail}"/>
+										    					<form:input id="customeremailAddress" cssClass="input-large required email form-control form-control-lg" path="customer.emailAddress" title="${msgEmail}"/>
 										    					<form:errors path="customer.emailAddress" cssClass="error" />
 											    				<span id="error-customer.emailAddress" class="error"></span>
 									    					</div> 
@@ -1097,7 +1105,7 @@ $(document).ready(function() {
 										    				<div class="controls"> 
 										    					<s:message code="NotEmpty.customer.billing.phone" text="Phone number is required" var="msgPhone"/>
 										      					<form:input id="customer.billing.phone" cssClass="input-large required billing-phone form-control form-control-lg" path="customer.billing.phone" title="${msgPhone}"/>
-										      					<form:errors path="customer.billing.phone" cssClass="error" />
+										      					<form:errors path="customerbillingphone" cssClass="error" />
 												    			<span id="error-customer.billing.phone" class="error"></span> 
 										    				</div> 
 										  			</div>

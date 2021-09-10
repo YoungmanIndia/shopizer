@@ -49,6 +49,10 @@
   					 <div class="tab-content">
     					<div class="tab-pane active" id="catalogue-section">
 								<div class="sm-ui-component">
+								<c:if test="${category.category.id!=null && category.category.id>0}">
+                                    <c:set value="${category.category}" var="adminCategory" scope="request"/>
+                                        <jsp:include page="/pages/admin/categories/category-menu.jsp" />
+                                </c:if>
 				<h3>
 					<c:choose>
 						<c:when test="${category.category.id!=null && category.category.id>0}">
@@ -95,7 +99,7 @@
                   <div class="control-group">
                         <label><s:message code="label.category.code" text="Category code"/></label>
 	                        <div class="controls">
-	                        		<form:input cssClass="input-large highlight" id="code" path="category.code" onblur="validateCode(this)"/>
+	                        		<form:input cssClass="input-large highlight" id="code" path="category.code" placeholder="Required" required="true" onblur="validateCode(this)"/>
 	                                <span class="help-inline"><div id="checkCodeStatus" style="display:none;"></div><form:errors path="category.code" cssClass="error" /></span>
 	                        </div>
                   </div>
@@ -103,7 +107,7 @@
                  <div class="control-group">
                         <label><s:message code="label.productedit.categoryname" text="Category name"/> (<c:out value="${description.language.code}"/>)</label>
                         <div class="controls">
-                        			<form:input cssClass="input-large highlight" id="name${counter.index}" path="descriptions[${counter.index}].name"/>
+                        			<form:input cssClass="input-large highlight" id="name${counter.index}" path="descriptions[${counter.index}].name" placeholder="Required" required="true"/>
                         			<span class="help-inline"><form:errors path="descriptions[${counter.index}].name" cssClass="error" /></span>
                         </div>
                   </div>
@@ -157,7 +161,7 @@
                   <div class="control-group">
                         <label><s:message code="label.category.title" text="Metatag title"/> (<c:out value="${description.language.code}"/>)</label>
                         <div class="controls">
-                        			<form:input path="descriptions[${counter.index}].metatagTitle"/>
+                        			<form:input path="descriptions[${counter.index}].metatagTitle" placeholder="Required" required="true"/>
                         			<span class="help-inline"><form:errors path="descriptions[${counter.index}].metatagTitle" cssClass="error" /></span>
                         </div>
                   </div>
@@ -185,6 +189,25 @@
                                     <span class="help-inline"><form:errors path="category.sortOrder" cssClass="error" /></span>
                         </div>
                   </div>
+
+                  <%-- Specification Table --%>
+                  <!-- <div class="control-group">
+                          <table id="specifications">
+                            <th>Specification</th>
+                            <th>Filter</th>
+                            <th>Variant</th>
+                            <c:forEach items="${category.specifications}" var="specification" varStatus="counter">
+                            <tr>
+                                <td><form:input cssClass="input-large highlight" id="name${counter.index}" path="specifications[${counter.index}].specification"/></td>
+                                <td><form:checkbox path="specifications[${counter.index}].filter" name="filter" /></td>
+                                <td><form:checkbox path="specifications[${counter.index}].variant" name="variant" />&nbsp(<c:out value="${specification.language.code}"/>)</td>
+                                <form:hidden path="specifications[${counter.index}].language.code" />
+                                <form:hidden path="specifications[${counter.index}].id" />
+                            </tr>
+                            </c:forEach>
+                          </table>
+                  </div> -->
+
                   <form:hidden path="category.id" />
 			      <div class="form-actions">
                   		<div class="pull-right">

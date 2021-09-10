@@ -1,12 +1,15 @@
 package com.salesmanager.shop.admin.controller.products;
 
 import com.salesmanager.core.business.services.catalog.product.ProductService;
+import com.salesmanager.core.business.services.catalog.product.availability.ProductsAvailableService;
 import com.salesmanager.core.business.services.catalog.product.price.ProductPriceService;
+import com.salesmanager.core.business.services.catalog.product.specification.ProductSpecificationService;
 import com.salesmanager.core.business.utils.ProductPriceUtils;
 import com.salesmanager.core.business.utils.ajax.AjaxPageableResponse;
 import com.salesmanager.core.business.utils.ajax.AjaxResponse;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.catalog.product.availability.ProductAvailability;
+import com.salesmanager.core.model.catalog.product.availability.ProductsAvailable;
 import com.salesmanager.core.model.catalog.product.price.ProductPrice;
 import com.salesmanager.core.model.catalog.product.price.ProductPriceDescription;
 import com.salesmanager.core.model.catalog.product.price.ProductPriceType;
@@ -17,7 +20,9 @@ import com.salesmanager.shop.admin.model.web.Menu;
 import com.salesmanager.shop.constants.Constants;
 import com.salesmanager.shop.utils.DateUtil;
 import com.salesmanager.shop.utils.LabelUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.lang3.StringUtils;
+import org.drools.core.beliefsystem.BeliefSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -51,6 +56,12 @@ public class ProductPriceController {
 	
 	@Inject
 	private ProductPriceUtils priceUtil;
+
+	@Inject
+	private ProductsAvailableService productsAvailableService;
+
+	@Inject
+	private ProductSpecificationService productSpecificationService;
 	
 	@Inject
 	LabelUtils messages;
@@ -59,7 +70,7 @@ public class ProductPriceController {
 	@RequestMapping(value="/admin/products/prices.html", method=RequestMethod.GET)
 	public String getProductPrices(@RequestParam("id") long productId,Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
-		setMenu(model,request);
+		setMenu(model,request, "catalogue-products");
 		
 		MerchantStore store = (MerchantStore)request.getAttribute(Constants.ADMIN_STORE);
 
@@ -214,7 +225,7 @@ public class ProductPriceController {
 		}
 		
 		
-		setMenu(model,request);
+		setMenu(model,request, "catalogue-products");
 		return displayProductPrice(product, productPriceId, model, request, response);
 		
 	}
@@ -233,7 +244,7 @@ public class ProductPriceController {
 			return "redirect:/admin/products/products.html";
 		}
 		
-		setMenu(model,request);
+		setMenu(model,request, "catalogue-products");
 		return displayProductPrice(product, null, model, request, response);
 
 
@@ -339,23 +350,97 @@ public class ProductPriceController {
 	public String saveProductPrice(@Valid @ModelAttribute("price") com.salesmanager.shop.admin.model.catalog.ProductPrice price, BindingResult result, Model model, HttpServletRequest request, Locale locale) throws Exception {
 		
 		//dates after save
-		
-		setMenu(model,request);
+
+		setMenu(model,request, "product-price");
 		
 		MerchantStore store = (MerchantStore)request.getAttribute(Constants.ADMIN_STORE);
-		
-		Product product = price.getProduct();
+
+		LOGGER.error(request.getParameter("productCode"));
+		LOGGER.error("Language", store.getDefaultLanguage());
+//		Product product = productService.getByCode(request.getParameter("productCode"), store.getDefaultLanguage());
+		Product product = productService.getByCode(request.getParameter("productCode"), store);
+		Long avail_id = (request.getParameter("avail_id").equals("")) ? 0L : Long.parseLong(request.getParameter("avail_id"));
+		Long price_id = (request.getParameter("price_id").equals("")) ? 0L : Long.parseLong(request.getParameter("price_id"));
 		Product dbProduct = productService.getById(product.getId());
+
 		if(store.getId().intValue()!=dbProduct.getMerchantStore().getId().intValue()) {
 			return "redirect:/admin/products/products.html";
 		}
 		
 		model.addAttribute("product",dbProduct);
-		
+		model.addAttribute("price",price);
+
+		String[] variants = request.getParameterMap().get("variants[]");
+		ProductPrice productPrice =  new ProductPrice();
+		ProductAvailability productAvailability = dbProduct.getAvailabilities().stream().findFirst().get();
+		Set<ProductsAvailable> productsAvailable = new HashSet<ProductsAvailable>();
+
+		if(price_id  > 0)
+		{
+			productPrice = productPriceService.getById(price_id);
+			productsAvailable = productPrice.getProductsAvailable();
+		}
+		else
+		{
+//			Boolean flag = true;
+			if (productAvailability.getPrices() != null)
+			{
+				for (ProductPrice price1 : productAvailability.getPrices())
+				{
+					if(price1.getProductsAvailable().size() == 0)
+					{
+						productPrice = price1;
+//						flag = false;
+//						break;
+					}
+				}
+			}
+//			else if(flag)
+//			{
+				avail_id = (productsAvailableService.getLastAvailId() ==null) ? 0 : productsAvailableService.getLastAvailId();
+				avail_id += 1;
+				if(variants != null)
+				{
+					for (String variantId : variants)
+					{
+						ProductsAvailable available = new ProductsAvailable();
+						available.setProduct(product);
+						available.setVariant(productSpecificationService.getById(Long.parseLong(variantId)));
+						available.setAvailId(avail_id);
+						productsAvailableService.save(available);
+						productsAvailable.add(available);
+					}
+				}
+				else {
+					ProductsAvailable available = new ProductsAvailable();
+					available.setProduct(product);
+					available.setAvailId(avail_id);
+					productsAvailableService.save(available);
+					productsAvailable.add(available);
+				}
+//			}
+		}
+
 		//validate price
 		BigDecimal submitedPrice = null;
 		try {
 			submitedPrice = priceUtil.getAmount(price.getPriceText());
+		} catch (Exception e) {
+			ObjectError error = new ObjectError("productPrice",messages.getMessage("NotEmpty.product.productPrice", locale));
+			result.addError(error);
+		}
+
+		BigDecimal submitedDPrice = null;
+		try {
+			submitedDPrice = priceUtil.getAmount(price.getDealerPrice());
+		} catch (Exception e) {
+			ObjectError error = new ObjectError("productPrice",messages.getMessage("NotEmpty.product.productPrice", locale));
+			result.addError(error);
+		}
+
+		BigDecimal submitedLPrice = null;
+		try {
+			submitedLPrice = priceUtil.getAmount(price.getListPrice());
 		} catch (Exception e) {
 			ObjectError error = new ObjectError("productPrice",messages.getMessage("NotEmpty.product.productPrice", locale));
 			result.addError(error);
@@ -396,48 +481,43 @@ public class ProductPriceController {
 		
 		
 		if (result.hasErrors()) {
-			return ControllerConstants.Tiles.Product.productPrice;
+			return ControllerConstants.Tiles.Product.productPriceMenu;
 		}
-		
 
-		price.getPrice().setProductPriceAmount(submitedPrice);
+		productPrice.setProductPriceAmount(submitedPrice);
+		productPrice.setDealersPrice(submitedDPrice);
+		productPrice.setLisingPrice(submitedLPrice);
 		if(!StringUtils.isBlank(price.getSpecialPriceText())) {
 			price.getPrice().setProductPriceSpecialAmount(submitedDiscountPrice);
 		}
+
 		
-		ProductAvailability productAvailability = null;
+//		Set<ProductPriceDescription> descriptions = new HashSet<ProductPriceDescription>();
+//		if(price.getDescriptions()!=null && price.getDescriptions().size()>0) {
+//
+//			for(ProductPriceDescription description : price.getDescriptions()) {
+//				description.setProductPrice(price.getPrice());
+//				descriptions.add(description);
+//				description.setProductPrice(price.getPrice());
+//			}
+//		}
 		
-		Set<ProductAvailability> availabilities = dbProduct.getAvailabilities();
-		for(ProductAvailability availability : availabilities) {
-			
-			if(availability.getId().longValue()==price.getProductAvailability().getId().longValue()) {
-				productAvailability = availability;
-				break;
-			}
-			
-			
+//		price.getPrice().setDescriptions(descriptions);
+		productPrice.setProductAvailability(productAvailability);
+		productPrice.setProductsAvailable(productsAvailable);
+
+		productPrice.setDefaultPrice(true);
+		
+		productPriceService.saveOrUpdate(productPrice);
+
+		for (ProductsAvailable available : productsAvailable)
+		{
+			available.setPrice(productPrice);
+			productsAvailableService.update(available);
 		}
-		
-		
-		
-		
-		Set<ProductPriceDescription> descriptions = new HashSet<ProductPriceDescription>();
-		if(price.getDescriptions()!=null && price.getDescriptions().size()>0) {
-			
-			for(ProductPriceDescription description : price.getDescriptions()) {
-				description.setProductPrice(price.getPrice());
-				descriptions.add(description);
-				description.setProductPrice(price.getPrice());
-			}
-		}
-		
-		price.getPrice().setDescriptions(descriptions);
-		price.getPrice().setProductAvailability(productAvailability);
-		
-		productPriceService.saveOrUpdate(price.getPrice());
 		model.addAttribute("success","success");
 		
-		return ControllerConstants.Tiles.Product.productPrice;
+		return ControllerConstants.Tiles.Product.productPriceMenu;
 		
 	}
 	
@@ -485,12 +565,12 @@ public class ProductPriceController {
 	}
 		
 	
-	private void setMenu(Model model, HttpServletRequest request) throws Exception {
+	private void setMenu(Model model, HttpServletRequest request, String activeMenu) throws Exception {
 		
 		//display menu
 		Map<String,String> activeMenus = new HashMap<String,String>();
 		activeMenus.put("catalogue", "catalogue");
-		activeMenus.put("catalogue-products", "catalogue-products");
+		activeMenus.put(activeMenu, activeMenu);
 		
 		@SuppressWarnings("unchecked")
 		Map<String, Menu> menus = (Map<String, Menu>)request.getAttribute("MENUMAP");
@@ -502,4 +582,15 @@ public class ProductPriceController {
 		
 	}
 
+
+	@PreAuthorize("hasRole('PRODUCTS')")
+	@RequestMapping(value="/admin/catalogue/productPrice.html", method= RequestMethod.GET)
+	public String getProductPrice(Model model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		com.salesmanager.shop.admin.model.catalog.ProductPrice pprice = new com.salesmanager.shop.admin.model.catalog.ProductPrice();
+		model.addAttribute("price",pprice);
+		this.setMenu(model, request, "product-price");
+
+		return ControllerConstants.Tiles.Product.productPriceMenu;
+	}
 }

@@ -366,7 +366,7 @@ $(document).ready(function() {
             <!-- Collect the nav links,  -->
             <div class="collapse navbar-collapse navbar-1" style="margin-top: 5px;">            
               <ul class="nav navbar-nav">
-                <li><a href="<c:url value="/shop/"/>" class="dropdown-toggle"><s:message code="menu.home" text="Home"/></a></li>
+                <li><a href="<c:url value="/shop/"/>" class="dropdown-toggle"><s:message text=""/></a></li>
                 <!-- Categories -->
                 <!-- mega menu style -->
                 <!--<li class="dropdown megaDropMenu">-->
@@ -396,19 +396,7 @@ $(document).ready(function() {
                   </ul>
                 </li>
                   
-                <c:if test="${requestScope.CONFIGS['displayPagesMenu']==true}">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="false">
-                  <s:message code="label.page" text="Page"/> <i class="fa fa-angle-down ml-5"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-left">
-                    <c:forEach items="${requestScope.CONTENT_PAGE}" var="content">
-	                    <c:if test="${not content.content.linkToMenu}">
-	                    	<li><a href="<c:url value="/shop/pages/${content.seUrl}.html"/>" class="current">${content.name}</a></li>
-	                    </c:if>
-                    </c:forEach>
-                  </ul>
-                </li>
-                </c:if>
+
                 <c:forEach items="${requestScope.CONTENT_PAGE}" var="content">
                 	<c:if test="${content.content.linkToMenu}">
                			<li><a href="<c:url value="/shop/pages/${content.seUrl}.html"/>" class="current">${content.name}</a></li>

@@ -5,24 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
+import com.salesmanager.core.model.catalog.product.specification.ProductSpecificationVariant;
 import com.salesmanager.core.model.common.audit.AuditSection;
 import com.salesmanager.core.model.common.audit.Auditable;
 import com.salesmanager.core.model.generic.SalesManagerEntity;
@@ -49,6 +36,10 @@ public class Category extends SalesManagerEntity<Long, Category> implements Audi
     @Valid
     @OneToMany(mappedBy="category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<CategoryDescription> descriptions = new HashSet<CategoryDescription>();
+
+    @Valid
+    @OneToMany(mappedBy="category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<CategorySpecification> specifications = new HashSet<CategorySpecification>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="MERCHANT_ID", nullable=false)
@@ -85,6 +76,17 @@ public class Category extends SalesManagerEntity<Long, Category> implements Audi
     @NotEmpty
     @Column(name="CODE", length=100, nullable=false)
     private String code;
+
+    @OneToMany(mappedBy="category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ProductSpecificationVariant> productSpecificationVariant;
+
+    public Set<ProductSpecificationVariant> getProductSpecificationVariant() {
+        return productSpecificationVariant;
+    }
+
+    public void setProductSpecificationVariant(Set<ProductSpecificationVariant> productSpecificationVariant) {
+        this.productSpecificationVariant = productSpecificationVariant;
+    }
 
     public String getCode() {
         return code;
@@ -222,4 +224,11 @@ public class Category extends SalesManagerEntity<Long, Category> implements Audi
       this.descriptions = descriptions;
     }
 
+    public Set<CategorySpecification> getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(Set<CategorySpecification> specifications) {
+        this.specifications = specifications;
+    }
 }

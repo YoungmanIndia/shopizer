@@ -92,21 +92,13 @@
 										<h1>${product.description.name}</h1>
 									</div>
 									<div class="checkbox">
-										<span><i class="fa fa-check-square" aria-hidden="true"></i>
+										<span>
 											<c:if test="${not product.productVirtual}">
-												<div class="checkbox">
+
 													<!-- availability -->
 													<strong><s:message code="label.product.available"
-															text="Availability" /></strong>:&nbsp;<span><c:choose>
-															<c:when test="${product.quantity>0}">
-																<span itemprop="availability" content="in_stock">${product.quantity}</span>
-															</c:when>
-															<c:otherwise>
-																<span itemprop="availability" content="out_of_stock"><s:message
-																		code="label.product.outofstock" text="Out of stock" />
-															</c:otherwise>
-														</c:choose></span><br>
-												</div>
+															text="Available" /></strong><br>
+
 											</c:if></span>
 									</div>
 									<!-- sku-->
@@ -114,9 +106,20 @@
 											text="Product code" /> ${product.sku}
 									</span>
 									<div class="product-price-star star-2">
-										<!-- Review -->
-										<jsp:include page="/pages/shop/common/catalog/rating.jsp" />
-									</div>
+                                            <!-- Review -->
+                                          <%--  <jsp:include page="/pages/shop/common/catalog/rating.jsp" /> --%>
+                                    </div>
+
+                                    <c:if test="${displayVaiantDropdown}">
+                                    									    <c:if test="${doesVariantExists}">
+                                                                                <div>
+
+                                                                                    <div class="variant-select" id="variantDropdowns">
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </c:if>
+                                    									</c:if>
 									<!-- price -->
 									<h4>
 										<span itemprop="offerDetails" itemscope
@@ -125,24 +128,15 @@
 												content="${requestScope.MERCHANT_STORE.storename}" />
 											<meta itemprop="currency"
 												content="<c:out value="${requestScope.MERCHANT_STORE.currency.code}" />" />
-											<span id="productPrice" class="price"> 
-												<c:choose>
-													<c:when test="${product.discounted}">
-														<del>
-															<c:out value="${product.originalPrice}" />
-														</del>&nbsp;<span class="specialPrice"><span
-															itemprop="price"><c:out
-																	value="${product.finalPrice}" /></span></span>
-													</c:when>
-													<c:otherwise>
-														<span itemprop="price"><c:out
-																value="${product.finalPrice}" /></span>
-													</c:otherwise>
-												</c:choose>
-										</span>
+											<span id="productPrice" class="price">
+											    <span itemprop="price" id="sellingPrice"><c:out value="${product.finalPrice}" /></span>
+										    </span>
 										</span>
 									</h4>
 									<c:if test="${product.productPrice.description!=null}"><strong><c:out value="${product.productPrice.description.priceAppender}"/></strong></c:if>
+
+
+
 									<jsp:include
 										page="/pages/shop/common/catalog/addToCartProduct.jsp" />
 								</div>
@@ -161,6 +155,7 @@
 													<s:message
 													code="label.productedit.productdesc"
 													text="Product description" /></a></li>
+
 									</ul>
 									<!-- Tab panes -->
 									<div class="tab-content">
@@ -169,54 +164,18 @@
 												<c:out value="${product.description.description}"
 													escapeXml="false" />
 												<dl class="dl-horizontal">
-													<dt>
-														<s:message code="label.product.weight" text="Weight" />
-														:
-													</dt>
-													<dd>
-														<fmt:formatNumber value="${product.productSpecifications.weight}"
-															maxFractionDigits="2" />
-														&nbsp;
-														<s:message
-															code="label.generic.weightunit.${requestScope.MERCHANT_STORE.weightunitcode}"
-															text="Pounds" />
-													</dd>
-													<dt>
-														<s:message code="label.product.height" text="Height" />
-														:
-													</dt>
-													<dd>
-														<fmt:formatNumber value="${product.productSpecifications.height}"
-															maxFractionDigits="2" />
-														&nbsp;
-														<s:message
-															code="label.generic.sizeunit.${requestScope.MERCHANT_STORE.seizeunitcode}"
-															text="Inches" />
-													</dd>
-													<dt>
-														<s:message code="label.product.width" text="Width" />
-														:
-													</dt>
-													<dd>
-														<fmt:formatNumber value="${product.productSpecifications.width}"
-															maxFractionDigits="2" />
-														&nbsp;
-														<s:message
-															code="label.generic.sizeunit.${requestScope.MERCHANT_STORE.seizeunitcode}"
-															text="Inches" />
-													</dd>
-													<dt>
-														<s:message code="label.product.length" text="Length" />
-														:
-													</dt>
-													<dd>
-														<fmt:formatNumber value="${product.productSpecifications.length}"
-															maxFractionDigits="2" />
-														&nbsp;
-														<s:message
-															code="label.generic.sizeunit.${requestScope.MERCHANT_STORE.seizeunitcode}"
-															text="Inches" />
-													</dd>
+
+                                                    <c:forEach items="${specifications}" var="entry">
+                                                        <dt>
+                                                            ${entry.key}
+                                                            :
+                                                        </dt>
+                                                        <dd>
+                                                            ${entry.value}
+                                                        </dd>
+                                                    </c:forEach>
+
+
 												</dl>
 											</div>
 										</div>
@@ -229,39 +188,39 @@
 					</div>
 				
 				<!-- product-simple-area-end -->
-				
- 				<div class="product-info-detailed pb-80 ptb-40-md ptb-20-xs">
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="product-info-tab">
-									<!-- Nav tabs -->
-									<ul class="product-info-tab-menu" role="tablist">
-										<li class="active"><a href="#reviews" data-toggle="tab"><i
-												class="fa fa-star pr-5"></i> <s:message
-													code="label.product.customer.reviews"
-													text="Customer reviews" /></a></li>
-									</ul>
-									<!-- Tab panes -->
-									<div>
-										<div class="tab-pane" id="reviews">
-											<div class="customer-review-top">
-												<h4>
-													<s:message code="label.product.customer.reviews"
-														text="Customer reviews" />
-												</h4>
-												<!-- reviews -->
-												<jsp:include page="/pages/shop/common/catalog/reviews.jsp" />
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!--fin col 9 -->
-					</div>
-				
-				
-				<!-- customer review -->
+				<%-- <div class="product-info-detailed pb-80 ptb-40-md ptb-20-xs">
+                              						<div class="row">
+                              							<div class="col-lg-12">
+                              								<div class="product-info-tab">
+                              									<!-- Nav tabs -->
+                              									<ul class="product-info-tab-menu" role="tablist">
+                              										<li class="active"><a href="#reviews" data-toggle="tab"><i
+                              												class="fa fa-star pr-5"></i> <s:message
+                              													code="label.product.customer.reviews"
+                              													text="Customer reviews" /></a></li>
+                              									</ul>
+                              									<!-- Tab panes -->
+                              									<div>
+                              										<div class="tab-pane" id="reviews">
+                              											<div class="customer-review-top">
+                              												<h4>
+                              													<s:message code="label.product.customer.reviews"
+                              														text="Customer reviews" />
+                              												</h4>
+                              												<!-- reviews -->
+                              												<jsp:include page="/pages/shop/common/catalog/reviews.jsp" />
+                              											</div>
+                              										</div>
+                              									</div>
+                              								</div>
+                              							</div>
+                              						</div>
+                              						<!--fin col 9 -->
+                              					</div> --%>
+
+
+                              				<!-- customer review -->
+
 
 				<!-- Related items -->
 				<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
@@ -318,10 +277,92 @@
 		        //re bind action
 		        $('.popup-img').magnificPopup({type:'image'});
 		    })
-		    
-		})
-		
 
-			
+		    $.ajax({
+                        type: 'GET',
+                        url: '<c:url value="/shop/product/searchByCode.html"/>?code=${product.sku}',
+                        dataType: 'json',
+                        success: function(response){
+                             var data = response.response.data;
+
+                             var specificationDetails = JSON.parse(data[0].specficationDetails);
+                             //console.log(specificationDetails);
+                             var variantOptions = "";
+                             var i=0;
+                             for (const [key, value] of Object.entries(specificationDetails)) {
+                               var optionString = "";
+
+                                value.forEach(function (item, index) {
+                                  optionString += "<option value='"+item.substring( item.indexOf("__")+2)+"'>"+ item.substring( 0, item.indexOf("__")) +"</option>"
+                                });
+
+                                var html = "<div class='control-group'>";
+                                html += "<label>"+key+"</label>";
+                                html += "<div class='controls'>";
+                                html += "<select id='variant_"+i+"' name='variants[]' onchange='getPrice()'>"; //TODO: Give ID
+                                html += optionString;
+                                html += "</select>";
+                                html += "</div>";
+                                html += "</div>";
+
+                                variantOptions += html;
+                                i++;
+                             }
+
+                            $("#variantDropdowns").html(variantOptions);
+                            getPrice();
+                        },
+                          error: function(xhr, textStatus, errorThrown) {
+                            alert('error ' + errorThrown);
+                        }
+                    });
+
+		});
+		
+        function getPrice()
+            {
+                        $("#avail_id").val("");
+                        $("#price_id").val("");
+                        $("#sellingPrice").val("");
+                      var variants = "";
+
+                      var selects = document.getElementsByTagName('select');
+                      var sel;
+                      for(var z=0; z<selects.length; z++){
+                           sel = selects[z];
+                           if(sel.name.indexOf('variants') === 0){
+                               variants+=sel.value+",";
+                           }
+                      }
+                      variants = variants.slice(0, variants.length - 1);
+
+                       $.ajax({
+                          type: 'GET',
+                          url: '<c:url value="/shop/product/getVariantsPrices.html"/>',
+                          dataType: 'json',
+                          data: {
+                            withSymbol: 'true',
+                            variants: variants,
+                            code: '${product.sku}'
+                          },
+                          success: function(response){
+                            console.log(response);
+                            var data = response.response.data;
+                            data = JSON.parse(data[0].prices);
+                            console.log(data);
+                            if(data.price=="" || data.price == null || data.price == undefined ) {
+                                $("#sellingPrice").html("This variant does not exist");
+                            }
+                            else {
+                                $("#sellingPrice").html(data.price);
+                            }
+
+                          },
+                          error: function(xhr, textStatus, errorThrown) {
+                            alert('error ' + errorThrown);
+                          }
+                       });
+            }
+
 		</script>
 

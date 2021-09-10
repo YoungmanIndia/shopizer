@@ -32,17 +32,17 @@ public class Product implements Serializable {
 	
 	@Valid
 	private ProductAvailability availability = null;
-	
+
 	@Valid
 	private ProductPrice price = null;
-	
+
 	private MultipartFile image = null;
 	
 	private ProductImage productImage = null;
-	
+
 	@NotEmpty
 	private String productPrice = "0";
-	
+
 	private String dateAvailable;
 
 	private ProductDescription description = null;
@@ -72,12 +72,14 @@ public class Product implements Serializable {
 	public ProductAvailability getAvailability() {
 		return availability;
 	}
+
 	public void setPrice(ProductPrice price) {
 		this.price = price;
 	}
 	public ProductPrice getPrice() {
 		return price;
 	}
+
 	public MultipartFile getImage() {
 		return image;
 	}
@@ -91,6 +93,7 @@ public class Product implements Serializable {
 	public String getProductPrice() {
 		return productPrice;
 	}
+
 	public void setProductImage(ProductImage productImage) {
 		this.productImage = productImage;
 	}

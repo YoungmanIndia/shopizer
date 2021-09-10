@@ -102,23 +102,6 @@
 		]
 	}},
 	{"menu":{
-		"code":"catalogue-options","url":"","role":"PRODUCTS","order":2,"menus":
-		[
-			{"menu":{
-				"code":"catalogue-options-list","url":"/admin/catalogue/options/options.html","role":"PRODUCTS","order":1
-			}},
-			{"menu":{
-				"code":"catalogue-options-create","url":"/admin/catalogue/options/option.html","role":"PRODUCTS","order":1
-			}},
-			{"menu":{
-				"code":"catalogue-optionsvalues-list","url":"/admin/catalogue/options/optionsvalues.html","role":"PRODUCTS","order":1
-			}},
-			{"menu":{
-				"code":"catalogue-optionsvalues-create","url":"/admin/options/createOptionValue.html","role":"PRODUCTS","order":1
-			}}
-		]
-	}},
-	{"menu":{
 		"code":"catalogue-products-group","url":"/admin/catalogue/groups/list.html","role":"PRODUCTS","order":3,"menus":
 		[
 			{"menu":{
@@ -130,20 +113,32 @@
 		]
 	}},
 	{"menu":{
-		"code":"manufacturer-list","url":"","role":"PRODUCTS","order":4,"menus":
+		"code":"brand-list","url":"","role":"PRODUCTS","order":4,"menus":
 		[
 			{"menu":{
-				"code":"manufacturer-list","url":"/admin/catalogue/manufacturer/list.html","role":"PRODUCTS","order":0
+				"code":"brand-list","url":"/admin/catalogue/brand/list.html","role":"PRODUCTS","order":0
 			}},
 			{"menu":{
-				"code":"manufacturer-create","url":"/admin/catalogue/manufacturer/create.html","role":"PRODUCTS","order":1
+				"code":"brand-create","url":"/admin/catalogue/brand/create.html","role":"PRODUCTS","order":1
 			}}
 		]
+	}},
+	{"menu":{
+		"code":"vendor-list","url":"","role":"PRODUCTS","order":5,"menus":
+		[
+			{"menu":{
+				"code":"vendor-list","url":"/admin/catalogue/vendor/list.html","role":"PRODUCTS","order":0
+			}},
+			{"menu":{
+				"code":"vendor-create","url":"/admin/catalogue/vendor/create.html","role":"PRODUCTS","order":1
+			}}
+		]
+	}},
+	{"menu":{
+		"code":"product-price","url":"/admin/catalogue/productPrice.html","role":"PRODUCTS","order":6
 	}}
 ]
 }},
-
-
 
 
 {
@@ -287,12 +282,20 @@
 "order":10
 }},
 {
+	"menu":{
+		"code":"quickbooks",
+		"icon":"icon-th",
+		"url":"/admin/quickbooks/quickbooks.html",
+		"role":"AUTH",
+		"order":11
+	}},
+{
 "menu":{
 "code":"configuration",
 "icon":"icon-wrench", 
 "url":"/admin/configuration/accounts.html", 
 "role":"AUTH",
-"order":11,
+"order":12,
 "menus":[
 	{"menu":{
 		"code":"accounts-conf","url":"/admin/configuration/accounts.html","role":"AUTH","order":0

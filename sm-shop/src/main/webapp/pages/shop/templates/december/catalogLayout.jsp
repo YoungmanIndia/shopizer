@@ -36,12 +36,19 @@ response.setDateHeader ("Expires", -1);
 
 				<!-- include all header js and css -->
                 <jsp:include page="/pages/shop/templates/december/sections/shopLinks.jsp" />
-                
+
+                <style>
+                    .backroundhover:hover {
+                        border: 1px solid yellow;
+                        box-shadow: 0 0 11px rgba(33,33,33,.2);
+                    }
+                </style>
                 
                 
     <script type="text/html" id="productBoxTemplate">
 			{{#products}}
-                        <div itemscope itemtype="http://schema.org/Enumeration" class="col-md-COLUMN-SIZE col-sm-6 col-xs-12 product" item-order="{{sortOrder}}" item-name="{{description.name}}" item-price="{{price}}" data-id="{{id}}">
+                        <div itemscope itemtype="http://schema.org/Enumeration" class="col-md-COLUMN-SIZE col-sm-6 col-xs-12 product backroundhover" item-order="{{sortOrder}}" item-name="{{description.name}}" item-price="{{price}}" data-id="{{id}}">
+
 								<div class="thumbnail product-img" style="border:none !important;">
                                     {{#image}}
 									<a href="<c:url value="/shop/product/" />{{description.friendlyUrl}}.html/ref=<c:out value="${requestScope.ref}"/>">
@@ -50,12 +57,13 @@ response.setDateHeader ("Expires", -1);
 									{{/image}}
 								</div>
 								<div class="product-content text-center">
-									<a class="listing-product-name" href="<c:url value="/shop/product/" />{{description.friendlyUrl}}.html/ref=<c:out value="${requestScope.ref}"/>"><h3 itemprop="name">{{description.name}}</h3></a>
-									<div class="stars" id="productRating_{{id}}"></div>
-									<h4>
+									<a class="listing-product-name" href="<c:url value="/shop/product/" />{{description.friendlyUrl}}.html/ref=<c:out value="${requestScope.ref}"/>"><h3 itemprop="name" style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis">{{description.name}}</h3></a>
+									<!-- commented <div class="stars" id="productRating_{{id}}"></div> -->
+
+                                    <h4>
 										{{#discounted}}<del>{{originalPrice}}</del>&nbsp;<span itemprop="price" class="specialPrice">{{finalPrice}}</span>{{/discounted}}
-										{{^discounted}}<span itemprop="price">{{finalPrice}}</span>{{/discounted}}
-									</h4>
+										{{^discounted}}<span itemprop="price">{{#price}}{{finalPrice}}{{/price}}{{^price}}Ask for price{{/price}}</span>{{/discounted}}
+								    </h4>
 									<c:if test="${requestScope.CONFIGS['allowPurchaseItems'] == true}">
 									<div class="store-btn">
       									<div class="store-btn-addtocart"><a class="addToCart" href="javascript:void(0)" productId="{{id}}"><s:message code="button.label.addToCart" text="Add to cart"/></a></div>
@@ -83,7 +91,6 @@ response.setDateHeader ("Expires", -1);
 		 <meta name="twitter:description" content="${requestScope.PAGE_INFORMATION.pageDescription}"/>
 		 <meta name="twitter:image" content="${requestScope.PAGE_INFORMATION.pageImageUrl}"/>
 	</c:if>
-
 	 </head>
  
  	<body>

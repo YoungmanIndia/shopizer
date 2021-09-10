@@ -145,6 +145,14 @@
 			<artifactId>httpclient</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.mashape.unirest/unirest-java -->
+		<dependency>
+			<groupId>com.mashape.unirest</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>1.4.9</version>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
 		<dependency>
 			<groupId>com.amazonaws</groupId>
@@ -189,6 +197,12 @@
 			<artifactId>braintree-java</artifactId>
 		</dependency>
 
+		<!-- Razorpay -->
+		<dependency>
+			<groupId>com.razorpay</groupId>
+			<artifactId>razorpay-java</artifactId>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/com.maxmind.geoip2/geoip2 -->
 		<dependency>
@@ -202,6 +216,31 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
+		</dependency>
+
+		<!-- QUICKBOOKS DEPENDENCIES -->
+
+		<!-- data jar -->
+		<dependency>
+			<groupId> com.intuit.quickbooks-online </groupId>
+			<artifactId> ipp-v3-java-data </artifactId>
+			<version> 5.0.2 </version>
+		</dependency>
+
+		<!-- devkit jar with dependencies-->
+		<dependency>
+			<groupId>com.intuit.quickbooks-online</groupId>
+			<artifactId>ipp-v3-java-devkit</artifactId>
+			<classifier>jar-with-dependencies</classifier>
+			<version>5.0.2</version>
+		</dependency>
+
+		<!-- oauth jar with dependencies-->
+		<dependency>
+			<groupId>com.intuit.quickbooks-online</groupId>
+			<artifactId>oauth2-platform-api</artifactId>
+			<classifier>jar-with-dependencies</classifier>
+			<version>5.0.2</version>
 		</dependency>
 
 		<!-- tests dependencies -->

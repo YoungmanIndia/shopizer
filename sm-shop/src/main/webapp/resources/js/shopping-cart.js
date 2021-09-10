@@ -144,7 +144,8 @@
 			 error: function(e) { 
 				log('Error while adding to cart');
 				$('#pageContainer').hideLoading();
-				 
+
+				 toastr.error('Could not add item to Cart');
 			 },
 			 success: function(cart) {
 
@@ -153,8 +154,13 @@
 			     if(cart.message!=null) { 
 			    	 //TODO error message
 			    	 log('Error while adding to cart ' + cart.message);
+
+			    	 toastr.error('Could not add item to Cart');
+			     } else {
+
+			          toastr.success('Added to cart successfully');
 			     }
-				 
+
 				 displayShoppigCartItems(cart,'#shoppingcartProducts');
 				 displayTotals(cart);
 				 $('#pageContainer').hideLoading();

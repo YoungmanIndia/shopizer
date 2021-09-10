@@ -40,7 +40,7 @@ Templates definition
 <!-- total template -->
 <script type="text/html" id="totalTemplate">
 		<th><s:message code="order.total.total" text="Total"/></th>
-		<td><strong><span class="amount grand-total">{{grandTotal}}</td>
+		<td><strong><span id="amt" class="amount grand-total">{{grandTotal}}</td>
 </script>
 
 											
@@ -487,6 +487,10 @@ function bindActions() {
 		else if(paymentSelection.indexOf('beanstream') >= 0) {
 			$('#paymentMethodType').attr("value", 'CREDITCARD');
 			submitForm();
+		}
+		else if(paymentSelection.indexOf('razorpay') >= 0) {
+			$('#paymentMethodType').attr("value", 'RAZORPAY');
+			initiateRazorPayPayment();
 		} else {
 			//submit form
 			submitForm();	
@@ -611,13 +615,13 @@ function initPayment(paymentSelection) {
 						<input type="hidden" id="useDistanceWindow" name="useDistanceWindow" value="<c:out value="${shippingMetaData.useDistanceModule}"/>">
 						<div class="col-lg-6 col-md-6">
 							<div class="checkbox-form">						
-								<h3><s:message code="label.customer.billinginformation" text="Billing information"/></h3>
+								<h3><s:message code="label.customer.billinginformation" text="Billing Information"/></h3>
 								<div class="row">
 									<div class="col-md-6">
 										<div class="checkout-form-list">
 											<label><s:message code="label.generic.firstname" text="First Name"/><span class="required">*</span></label>										
 											<s:message code="NotEmpty.customer.firstName" text="First name is required" var="msgFirstName"/>
-											<form:input id="customer.firstName" cssClass="required" path="customer.billing.firstName" autofocus="autofocus" title="${msgFirstName}"/>
+											<form:input id="customerfirstName" cssClass="required" path="customer.billing.firstName" autofocus="autofocus" title="${msgFirstName}"/>
 											<form:errors path="customer.billing.firstName" cssClass="error" />
 										    <span id="error-customer.billing.firstName" class="error"></span>
 										</div>
@@ -626,12 +630,12 @@ function initPayment(paymentSelection) {
 										<div class="checkout-form-list">
 											<label><s:message code="label.generic.lastname" text="Last Name"/><span class="required">*</span></label>										
 										    <s:message code="NotEmpty.customer.lastName" text="Last name is required" var="msgLastName"/>
-										    <form:input id="customer.lastName" cssClass="required"  maxlength="32" path="customer.billing.lastName" title="${msgLastName}" />
+										    <form:input id="customerlastName" cssClass="required"  maxlength="32" path="customer.billing.lastName" title="${msgLastName}" />
 										    <form:errors path="customer.billing.lastName" cssClass="error" />
 										    <span id="error-customer.billing.lastName" class="error"></span>
 										</div>
 									</div>
-									<div class="col-md-12">
+									<div class="col-md-6">
 										<div class="checkout-form-list">
 											<label><s:message code="label.customer.billing.company" text="Billing company"/></label>
 										    <form:input id="customer.billing.company" cssClass="" path="customer.billing.company"/>
@@ -639,6 +643,15 @@ function initPayment(paymentSelection) {
 											<span id="error-customer.billing.company" class="error"></span>
 										</div>
 									</div>
+
+									<div class="col-md-6">
+                                        <div class="checkout-form-list">
+                                            <label><s:message code="label.gstin" text="GSTIN"/></label>
+                                            <form:input id="customer.gstin" minlength="15" maxlength="15" path="customer.gstin" cssClass="" />
+                                            <form:errors path="customer.gstin" cssClass="error" />
+                                            <span id="error-customer.gstin" class="error"></span>
+                                        </div>
+                                    </div>
 									<c:if test="${googleMapsKey != ''}">
 									<!-- geolocate component -->
 									<div class="col-md-12">
@@ -700,8 +713,8 @@ function initPayment(paymentSelection) {
 									<div class="col-md-6">
 										<div class="checkout-form-list">
 											<label><s:message code="label.generic.email" text="Email address"/> <span class="required">*</span></label>										
-											<s:message code="NotEmpty.customer.emailAddress" text="Email address is required" var="msgEmail"/> 
-										    <form:input id="customer.emailAddress" cssClass="required" path="customer.emailAddress" title="${msgEmail}"/>
+											<s:message code="NotEmpty.customer.emailAddress" text="Email address is required" var="msgEmail"/>
+										    <form:input id="customeremailAddress" cssClass="required" path="customer.emailAddress" title="${msgEmail}"/>
 										    <form:errors path="customer.emailAddress" cssClass="error" />
 											<span id="error-customer.emailAddress" class="error"></span>
 										</div>
@@ -710,7 +723,7 @@ function initPayment(paymentSelection) {
 										<div class="checkout-form-list">
 											<label><s:message code="label.generic.phone" text="Phone number"/>  <span class="required">*</span></label>										
 											<s:message code="NotEmpty.customer.billing.phone" text="Phone number is required" var="msgPhone"/>
-										    <form:input id="customer.billing.phone" cssClass="required" path="customer.billing.phone" title="${msgPhone}"/>
+										    <form:input id="customerbillingphone" cssClass="required" path="customer.billing.phone" title="${msgPhone}"/>
 										    <form:errors path="customer.billing.phone" cssClass="error" />
 											<span id="error-customer.billing.phone" class="error"></span>
 										</div>
@@ -1072,6 +1085,13 @@ function initPayment(paymentSelection) {
 						</c:if>
 					</div>
 						</div>
+
+						<div>
+							<input type="hidden" name='payment["r_payment_id"]' id="r_payment_id" />
+							<input type="hidden" name='payment["r_order_id"]' id="r_order_id"/>
+							<input type="hidden" name='payment["r_signature"]' id="r_signature"/>
+						</div>
+
 					</form:form>
 				</div>
 			</div>
