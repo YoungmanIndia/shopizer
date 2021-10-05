@@ -54,6 +54,12 @@
 			quantity = 1;
 		}
         var variant_price = $("#variant_price").html();
+        if(variant_price == undefined)
+            variant_price = '""';
+
+		var variant_id = $("#variant_id").val();
+		if(variant_id === undefined)
+			variant_id = '""';
 
 		var formId = '#input-' + sku;
 		//var $inputs = $(formId); 
@@ -111,7 +117,8 @@
 		}
 		var shoppingCartItem = shoppingCartItem + '"quantity":' + quantity + ',';
 		var shoppingCartItem = shoppingCartItem + '"productId":' + sku + ',';
-		var shoppingCartItem = shoppingCartItem + '"priceId":' + variant_price;
+		var shoppingCartItem = shoppingCartItem + '"priceId":' + variant_price + ',';
+		var shoppingCartItem = shoppingCartItem + '"variantId":' + variant_id;
 		
 		
 		var attributes = null;

@@ -40,7 +40,7 @@ Templates definition
 <!-- total template -->
 <script type="text/html" id="totalTemplate">
 		<th><s:message code="order.total.total" text="Total"/></th>
-		<td><strong><span id="amt" class="amount grand-total">{{grandTotal}}</td>
+		<td><strong><span id="amt" class="amount grand-total">{{grandTotal}}</span></strong></td>
 </script>
 
 											
@@ -93,11 +93,9 @@ $(document).ready(function() {
 	//form displaying shipping address
 	$("#confirmShippingAddress").hide();
 
-    formValid = false;	
+    var formValid = false;
 
-	<!-- 
 		//can use masked input for phone (USA - CANADA)
-	-->
 
 	paymentModule = '${order.defaultPaymentMethodCode}';
 	log('PaymentModule ' + paymentModule);
@@ -211,6 +209,19 @@ function isFormValid() {
 	var $inputs = $(checkoutFormId).find(':input');
 	var valid = true;
 	var firstErrorMessage = null;
+
+	if(parseInt("${order.orderTotalSummary.total}") < 1499) {//disable submit button
+	    valid = true;
+	    firstErrorMessage = "Order min value should be 1499";
+        $(formErrorMessageId).addClass('alert-error alert-danger');
+        $(formErrorMessageId).removeClass('alert-success');
+        $(formErrorMessageId).html('<!--<img src="<c:url value="/resources/img/icon_error.png"/>" width="40"/>&nbsp;--><strong><font color="red">' + firstErrorMessage + '</font></strong>');
+        $(formErrorMessageId).show();
+        $('#submitOrder').addClass('btn-disabled');
+        $('#submitOrder').prop('disabled', true);
+    }
+
+
 	$inputs.each(function() {
 		if($(this).hasClass('required')) {
 			var fieldValid = isCheckoutFieldValid($(this));
@@ -857,7 +868,7 @@ function initPayment(paymentSelection) {
 										<tfoot>
 											<!-- subtotals -->
 											<c:forEach items="${order.orderTotalSummary.totals}" var="total">
-												<c:if test="${total.orderTotalCode!='order.total.total'}">
+												<c:if test="${total.orderTotalCode=='order.total.subtotal' || total.orderTotalCode=='order.total.shipping'}">
 												<tr id="cart-subtotal-${total.orderTotalCode}" class="cart-subtotal subt"> 
 														<td class="order-total-label">
 														<c:choose>

@@ -187,7 +187,7 @@
 															<td width="10%"
 																data-th="<s:message code="label.quantity" text="Quantity"/>">
 																<input type="number" min="1"
-																class="input-small quantity text-center"
+																class="input-small quantity text-center" onchange="javascript:updateCart('#mainCartTable');"
 																value="${shoppingCartItem.quantity}" name="quantity"
 																id="${shoppingCartItem.id}"
 																<c:if test="${shoppingCartItem.productVirtual==true}">readonly</c:if>>
@@ -219,9 +219,9 @@
 										<div class="row">
 											<div class="col-lg-8 col-md-8 col-sm-7 col-xs-12">
 												<div class="buttons-cart">
-													<a href="#"
+													<!--<a href="#"
 														onClick="javascript:updateCart('#mainCartTable');"><s:message
-															code="label.order.recalculate" text="Racalculate" /></a> <a
+															code="label.order.recalculate" text="Racalculate" /></a>--> <a
 														href="<c:url value="/shop"/>"><s:message
 															code="button.label.continue" text="Continue shopping" /></a>
 												</div>
