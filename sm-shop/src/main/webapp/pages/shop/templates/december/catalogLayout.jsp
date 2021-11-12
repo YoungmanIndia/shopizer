@@ -57,7 +57,7 @@ response.setDateHeader ("Expires", -1);
 									{{/image}}
 								</div>
 								<div class="product-content text-center">
-									<a class="listing-product-name" href="<c:url value="/shop/product/" />{{description.friendlyUrl}}.html/ref=<c:out value="${requestScope.ref}"/>"><h3 itemprop="name" style="line-height:1.3; padding:0px; margin:0px; height:60px; overflow:hidden;">{{description.name}}</h3></a>
+									<a class="listing-product-name" href="<c:url value="/shop/product/" />{{description.friendlyUrl}}.html/ref=<c:out value="${requestScope.ref}"/>"><h3 itemprop="name" style="line-height:1; padding:0px; margin:0px; height:60px; overflow:hidden;">{{description.name}}</h3></a>
 									<!-- commented <div class="stars" id="productRating_{{id}}"></div> -->
 
                                     <h4 style="padding:0px; margin:0px;">
@@ -66,7 +66,7 @@ response.setDateHeader ("Expires", -1);
 								    </h4>
 									<c:if test="${requestScope.CONFIGS['allowPurchaseItems'] == true}">
 									<div class="store-btn">
-										{{^discounted}}{{^price}}<div class="store-btn-addtocart"><a class="open-askForPrice askForPrice" data-sku="{{sku}}" data-toggle="modal" data-target="#modalContactForm"><s:message code="button.label.askForPrice" text="Ask for price"/></a></div>{{/price}}{{/discounted}}
+										{{^discounted}}{{^price}}<div class="store-btn-addtocart"><a class="open-askForPrice askForPrice" data-sku="{{sku}}" data-name="{{description.name}}" data-toggle="modal" data-target="#modalContactForm"><s:message code="button.label.askForPrice" text="Ask for price"/></a></div>{{/price}}{{/discounted}}
       									{{^hasVariants}}{{#price}}<div class="store-btn-addtocart"><a class="addToCart" href="javascript:void(0)" productId="{{id}}"><s:message code="button.label.addToCart" text="Add to cart"/></a></div>{{/price}}{{/hasVariants}}
       									{{#hasVariants}}{{#price}}<div class="store-btn-addtocart"><a class="viewMore" productId="{{id}}" href="<c:url value="/shop/product/" />{{description.friendlyUrl}}.html/ref=<c:out value="${requestScope.ref}"/>"><s:message code="button.label.viewMore" text="View More"/></a></div>{{/price}}{{/hasVariants}}
    									</div>
